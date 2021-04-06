@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "898023990609",
+    "project_id": "exuastive",
+    "storage_bucket": "exuastive.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:898023990609:android:57eb62653ba63d856a9f70",
+        "android_client_info": {
+          "package_name": "com.exhaustive"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "898023990609-ale3usfloe699a4lsb3clgl7c5c08i0j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAllg2IyMHJLfukMbL1C_rUgP3DfR9Xh-k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "898023990609-ale3usfloe699a4lsb3clgl7c5c08i0j.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
