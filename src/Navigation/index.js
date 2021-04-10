@@ -7,6 +7,7 @@ const Stack = createStackNavigator();
 import * as CONSTS from './../Constants/PageRoutes';
 import SocialApp from '../Screens/SocialApp';
 import SocialPOstPage from './../Screens/SocialApp/postPage';
+import BankingApp from '../Screens/bankingApp';
 
 const SocialAppStackNavigator = () => {
   return (
@@ -23,7 +24,7 @@ const SocialAppStackNavigator = () => {
 const BankingAppStackNavigator = () => {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Contact" component={Contact} />
+      <Stack.Screen name={CONSTS.BankingApp} component={BankingApp} />
     </Stack.Navigator>
   );
 };
