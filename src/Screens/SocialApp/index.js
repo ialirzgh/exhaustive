@@ -1,40 +1,34 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {
-  SafeAreaView,
   Text,
   View,
   TextInput,
-  Image,
   StyleSheet,
-  ImageBackground,
   TouchableOpacity,
-  ScrollView,
   StatusBar,
+  FlatList,
+  ActivityIndicator,
+  Modal,
+  Alert,
+  Button,
 } from 'react-native';
-import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import Entypo from 'react-native-vector-icons/Entypo';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-
 MaterialCommunityIcons;
-import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-
-import {Snackbar} from 'react-native-paper';
-import SocialCardView from './../../Components/SocialCardView/index';
+import {store} from './../../redux/store/index';
 import {Colors} from '../../Theme/colors';
-import {FlatList} from 'react-native';
-import {Posts} from '../../Utils/Api/Fakes';
 import SocialCardPostView from './../../Components/SocialCardView/index';
+import {useSelector, useDispatch} from 'react-redux';
 
 const SocialApp = ({navigation}) => {
   //v                       function section
   const onMostClicked = () => setIsSelected(false);
   const onRecentClicked = () => setIsSelected(true);
-
   const SocialCardPostViewRenderer = ({item}) => {
     return (
       <SocialCardPostView
@@ -48,24 +42,121 @@ const SocialApp = ({navigation}) => {
       />
     );
   };
+  useEffect(() => {
+    setList(state);
+  }, []);
 
   //v                         end of function section
 
   // v              Variables Section
+  const [Refresher, setRefresher] = useState(false);
+  const [list, setList] = useState();
   const [isSelected, setIsSelected] = useState(false);
   const searchPlaceHolder = 'Search Between Posts ...';
+  const [modalVisible, setModalVisible] = useState(false);
+  const nameRef = useRef();
+  const avatarRef = useRef();
+  const postRef = useRef();
+  const state = useSelector(state => state.postReducer);
+  const dispatcher = useDispatch();
+  const [indicatorShown, setIndicatorShown] = useState(false);
+
   // v              end of Variables Section
 
+  useEffect(() => {
+    (nameRef.current = ''), (postRef.current = '');
+    avatarRef.current = '';
+    setList(state);
+    setIndicatorShown(false);
+  }, [Refresher]);
   const HeaderOfFlatListSection = () => (
     <View style={style.WholeContainer}>
+      <View
+        style={{
+          backgroundColor: 'green',
+          justifyContent: 'center',
+          alignItems: 'center',
+          flex: 1,
+        }}>
+        <Modal
+          animationType={'fade'}
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            setModalVisible(false);
+          }}>
+          <View style={style.modalView}>
+            <TextInput
+              placeholder={'enter your name'}
+              onChangeText={e => {
+                nameRef.current = e;
+              }}
+            />
+            <TextInput
+              placeholder={'enter your avarlink'}
+              onChangeText={e => {
+                avatarRef.current = e;
+              }}
+            />
+            <TextInput
+              placeholder={'enter your postlink'}
+              onChangeText={e => {
+                postRef.current = e;
+              }}
+            />
+            <TouchableOpacity
+              style={{width: 100, height: 25, backgroundColor: 'white'}}
+              onPress={() => {
+                if (
+                  nameRef.current &&
+                  avatarRef.current &&
+                  postRef.current !== ''
+                ) {
+                  setIndicatorShown(true);
+                  dispatcher({
+                    type: 'POST_ADDED',
+                    payload: {
+                      id: Math.random(),
+                      name: nameRef.current,
+                      avatar: avatarRef.current,
+                      post: postRef.current,
+                    },
+                  });
+                  setRefresher(!Refresher);
+                } else {
+                  Alert.alert(
+                    'fill out the form ',
+                    ' in order to add post yoy should fill all the fields',
+                  );
+                }
+              }}>
+              {indicatorShown ? (
+                <ActivityIndicator
+                  size={'large'}
+                  color={'red'}
+                  animating={indicatorShown}
+                />
+              ) : (
+                <Text>Press me</Text>
+              )}
+            </TouchableOpacity>
+          </View>
+        </Modal>
+      </View>
+
       <StatusBar hidden={true} />
       {/* // topBar icon View */}
       <View style={style.TopIcons}>
-        <MaterialCommunityIcons
-          name={'shape-circle-plus'}
-          color={'white'}
-          size={27}
-        />
+        <TouchableOpacity
+          onPress={() => {
+            setModalVisible(true);
+          }}>
+          <MaterialCommunityIcons
+            name={'shape-circle-plus'}
+            color={'white'}
+            size={27}
+          />
+        </TouchableOpacity>
         <Entypo name={'dots-two-vertical'} color={'white'} size={27} />
       </View>
       {/* // end of topBar icon View */}
@@ -124,7 +215,8 @@ const SocialApp = ({navigation}) => {
   return (
     <View style={{backgroundColor: Colors.white}}>
       <FlatList
-        data={Posts}
+        extraData={Refresher}
+        data={list}
         ListHeaderComponent={HeaderOfFlatListSection}
         renderItem={SocialCardPostViewRenderer}
         ListFooterComponent={<View style={style.FlatListFooterStyle}></View>}
@@ -205,5 +297,18 @@ const style = StyleSheet.create({
   },
   FlatListFooterStyle: {
     marginBottom: 30,
+  },
+  modalView: {
+    borderRadius: 20,
+    // borderWidth: 0.1,
+    // elevation: 10,
+    borderColor: Colors.PrimaryColorDark,
+    marginLeft: wp('15%'),
+    marginTop: hp('15%'),
+    width: '70%',
+    height: '70%',
+    backgroundColor: Colors.PrimaryColorLight,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
