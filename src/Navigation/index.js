@@ -23,7 +23,7 @@ const SocialAppStackNavigator = () => {
 
 const BankingAppStackNavigator = () => {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator screenOptions={{headerShown: false}}>
       <Stack.Screen name={CONSTS.BankingApp} component={BankingApp} />
     </Stack.Navigator>
   );

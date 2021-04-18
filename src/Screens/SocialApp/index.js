@@ -3,6 +3,8 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import {EventRegister} from 'react-native-event-listeners';
+
 import {
   Text,
   View,
@@ -24,8 +26,19 @@ import {store} from './../../redux/store/index';
 import {Colors} from '../../Theme/colors';
 import SocialCardPostView from './../../Components/SocialCardView/index';
 import {useSelector, useDispatch} from 'react-redux';
+import SQLite from 'react-native-sqlite-2';
 
 const SocialApp = ({navigation}) => {
+  const db = SQLite.openDatabase('test.db', '1.0', '', 1);
+
+  db.transaction(function (txn) {
+    txn.executeSql('SELECT * FROM users', [], (tx, res) => {
+      for (var i = 0; i < res.rows.length; ++i) {
+        console.log(res.rows.item(i));
+      }
+    });
+  });
+
   //v                       function section
   const onMostClicked = () => setIsSelected(false);
   const onRecentClicked = () => setIsSelected(true);
