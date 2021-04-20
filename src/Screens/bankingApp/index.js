@@ -7,15 +7,27 @@ import {Avatar} from 'react-native-elements';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import NetInfo from '@react-native-community/netinfo';
 import firestore, {firebase} from '@react-native-firebase/firestore';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 const placepicsCollection = firestore().collection('placePics');
 const placepostsCollection = firestore().collection('placeposts');
+import * as CONSTS from './../../Constants/PageRoutes';
 firestore().settings({
   persistence: false,
 });
-const BankingApp = () => {
+const BankingApp = ({navigation}) => {
   const [piclist, setPicList] = useState([]);
+  const [piclist2, setPicList2] = useState([]);
 
   async function dataReader() {
+    const arr = [];
+    placepicsCollection.get().then(querySnapshot => {
+      querySnapshot.forEach(documentSnapshot => {
+        arr.push(documentSnapshot.data());
+      });
+      setPicList(arr);
+    });
+  }
+  async function dataReader2() {
     const arr = [];
     placepicsCollection.get().then(querySnapshot => {
       querySnapshot.forEach(documentSnapshot => {
@@ -28,68 +40,9 @@ const BankingApp = () => {
   useEffect(() => {
     dataReader();
     firestoreListener();
+    firestoreListener2();
+    dataReader2();
   }, []);
-  const pictureLinks = [
-    {
-      id: 1,
-      link:
-        'https://i.pinimg.com/originals/ff/eb/f2/ffebf2c3ee5bb38549cefc356e846d48.jpg',
-    },
-
-    {
-      id: 2,
-      link:
-        'https://i.pinimg.com/originals/fa/26/59/fa26590f0402303fc28abf125445e7eb.jpg',
-    },
-    {
-      id: 3,
-      link:
-        'https://i.pinimg.com/originals/ff/eb/f2/ffebf2c3ee5bb38549cefc356e846d48.jpg',
-    },
-
-    {
-      id: 4,
-      link:
-        'https://i.pinimg.com/originals/fa/26/59/fa26590f0402303fc28abf125445e7eb.jpg',
-    },
-  ];
-
-  const postdata = [
-    {
-      id: 1,
-      link:
-        'https://i.pinimg.com/originals/ff/eb/f2/ffebf2c3ee5bb38549cefc356e846d48.jpg',
-      name: 'Span Italy,tour',
-      rate: 4.7,
-      price: 233.99,
-    },
-
-    {
-      name: 'Span Italy,tour',
-      rate: 4.7,
-      price: 233.99,
-      id: 2,
-      link:
-        'https://i.pinimg.com/originals/fa/26/59/fa26590f0402303fc28abf125445e7eb.jpg',
-    },
-    {
-      name: 'Span Italy,tour',
-      rate: 4.7,
-      price: 233.99,
-      id: 3,
-      link:
-        'https://i.pinimg.com/originals/ff/eb/f2/ffebf2c3ee5bb38549cefc356e846d48.jpg',
-    },
-
-    {
-      name: 'Span Italy,tour',
-      rate: 4.7,
-      price: 233.99,
-      id: 4,
-      link:
-        'https://i.pinimg.com/originals/fa/26/59/fa26590f0402303fc28abf125445e7eb.jpg',
-    },
-  ];
 
   function PhotoRenderer({item}) {
     return <Image style={style.photoStyle} source={{uri: item.link}} />;
@@ -132,12 +85,13 @@ const BankingApp = () => {
             <Text style={style.picTitle}>Favorite in Malang</Text>
           </View>
           <View style={style.picBottomSection}>
-            {/* <FlatList
+            <FlatList
+              showsHorizontalScrollIndicator={false}
               horizontal={true}
               data={piclist}
               renderItem={PhotoRenderer}
               keyExtractor={e => e.id}
-            /> */}
+            />
           </View>
         </View>
         <View style={style.postSection}>
@@ -150,20 +104,24 @@ const BankingApp = () => {
   }
   function postRenderer({item}) {
     return (
-      <View style={style.postContainer}>
+      <TouchableOpacity
+        style={style.postContainer}
+        onPress={() => {
+          navigation.navigate(CONSTS.BankingAppPostPage, {item});
+        }}>
         <Image style={style.postpicStyle} source={{uri: item.link}} />
         <View style={style.posttextStylesContainer}>
-          <Text style={style.postTextStyle}>{item.name}</Text>
+          <Text style={style.postTextStyle}>{item.title}</Text>
           <Text style={style.postTextStyle}>${item.price}</Text>
           <View style={style.rateContainer}>
-            <Text>{item.rate}</Text>
+            <Text>{item.star}</Text>
             <MaterialCommunityIcons name="star" color={'orange'} size={14} />
           </View>
         </View>
         <View style={style.likeIconContainer}>
-          <MaterialCommunityIcons name="heart" color={'red'} size={30} />
+          <MaterialCommunityIcons name="heart" color={'red'} size={25} />
         </View>
-      </View>
+      </TouchableOpacity>
     );
   }
 
@@ -172,17 +130,13 @@ const BankingApp = () => {
       Alert.alert('warning', ' you have likely lost your internet connection', [
         {
           text: 'try to connect',
-          onPress: () =>
-            networkState.isConnected
-              ? Alert.alert('waiting', 'trying to get connection here')
-              : Alert.alert('warning', 'no connection found'),
         },
       ]);
     }
   });
 
   async function firestoreListener() {
-    const arr = [];
+    var arr = [];
     firestore()
       .collection('placePics')
       .onSnapshot(doc => {
@@ -190,6 +144,20 @@ const BankingApp = () => {
           arr.push(e.data());
         }),
           setPicList(arr);
+        arr = [];
+      });
+  }
+
+  async function firestoreListener2() {
+    var arr = [];
+    firestore()
+      .collection('placeposts')
+      .onSnapshot(doc => {
+        doc.docs.map(e => {
+          arr.push(e.data());
+        }),
+          setPicList2(arr);
+        arr = [];
       });
   }
 
@@ -197,9 +165,10 @@ const BankingApp = () => {
     <View style={style.Container}>
       <View style={style.postBottomSection}>
         <FlatList
+          showsVerticalScrollIndicator={false}
           ListHeaderComponent={HeaderComponents}
           renderItem={postRenderer}
-          data={postdata}
+          data={piclist2}
           ListFooterComponent={<View style={{marginBottom: 10}}></View>}
         />
       </View>

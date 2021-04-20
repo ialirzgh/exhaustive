@@ -8,6 +8,7 @@ import * as CONSTS from './../Constants/PageRoutes';
 import SocialApp from '../Screens/SocialApp';
 import SocialPOstPage from './../Screens/SocialApp/postPage';
 import BankingApp from '../Screens/bankingApp';
+import BankingPostPage from '../Screens/bankingApp/bankingpostpage';
 
 const SocialAppStackNavigator = () => {
   return (
@@ -25,12 +26,12 @@ const BankingAppStackNavigator = () => {
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
       <Stack.Screen name={CONSTS.BankingApp} component={BankingApp} />
+      <Stack.Screen
+        name={CONSTS.BankingAppPostPage}
+        component={BankingPostPage}
+      />
     </Stack.Navigator>
   );
 };
 
 export {SocialAppStackNavigator, BankingAppStackNavigator};
-
-const Contact = () => {
-  return <Text>Contact</Text>;
-};

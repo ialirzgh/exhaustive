@@ -34,7 +34,7 @@ const style = StyleSheet.create({
     marginLeft: '5%',
     borderRadius: 10,
     borderWidth: 1,
-    elevation: 6,
+
     borderColor: 'grey',
     width: '90%',
     height: 50,
@@ -95,8 +95,9 @@ const style = StyleSheet.create({
     height: 55,
   },
   picTitle: {
+    paddingTop: 5,
     fontWeight: 'bold',
-    fontSize: 20,
+    fontSize: 17,
     marginLeft: 10,
   },
   photoStyle: {
@@ -124,7 +125,6 @@ const style = StyleSheet.create({
     backgroundColor: Colors.white,
     marginTop: 10,
     borderRadius: 10,
-    elevation: 5,
   },
   posttextStylesContainer: {
     paddingLeft: 3,
@@ -148,7 +148,7 @@ const style = StyleSheet.create({
   postTextStyle: {
     paddingTop: 2,
     fontWeight: 'bold',
-    fontSize: 17,
+    fontSize: 15,
   },
   rateContainer: {
     paddingTop: 6,
