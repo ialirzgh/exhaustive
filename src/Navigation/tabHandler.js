@@ -8,10 +8,11 @@ import SocialApp from '../Screens/SocialApp';
 import BankingApp from '../Screens/bankingApp';
 import {Colors} from '../Theme/colors';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import Map from '../Screens/map';
 const Tab = createMaterialBottomTabNavigator();
 
 const BottomTabNavigator = () => {
-  const tabNames = ['Banking', 'Socialapp'];
+  const tabNames = ['Banking', 'Socialapp', 'Map'];
   return (
     <Tab.Navigator
       shifting={true}
@@ -36,6 +37,16 @@ const BottomTabNavigator = () => {
         }}
         name={tabNames[1]}
         component={SocialAppStackNavigator}
+      />
+      <Tab.Screen
+        options={{
+          tabBarLabel: 'map',
+          tabBarIcon: ({color}) => (
+            <MaterialCommunityIcons name="map" color={color} size={26} />
+          ),
+        }}
+        name={tabNames[2]}
+        component={Map}
       />
     </Tab.Navigator>
   );

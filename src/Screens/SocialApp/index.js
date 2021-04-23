@@ -31,14 +31,6 @@ import SQLite from 'react-native-sqlite-2';
 const SocialApp = ({navigation}) => {
   const db = SQLite.openDatabase('test.db', '1.0', '', 1);
 
-  db.transaction(function (txn) {
-    txn.executeSql('SELECT * FROM users', [], (tx, res) => {
-      for (var i = 0; i < res.rows.length; ++i) {
-        console.log(res.rows.item(i));
-      }
-    });
-  });
-
   //v                       function section
   const onMostClicked = () => setIsSelected(false);
   const onRecentClicked = () => setIsSelected(true);
@@ -55,8 +47,29 @@ const SocialApp = ({navigation}) => {
       />
     );
   };
+
+  function dbExecuter({states, mode}) {
+    db.transaction(function (txn) {
+      txn.executeSql('INSERT INTO Users (name) VALUES (:name)', [states]);
+
+      txn.executeSql('SELECT * FROM `users`', [], function (tx, res) {
+        res.rows.forEach(e => {
+          console.log(e.item);
+        });
+      });
+    });
+  }
+
   useEffect(() => {
     setList(state);
+
+    db.transaction(function (txn) {
+      txn.executeSql('SELECT * FROM users', [], (tx, res) => {
+        res.rows.forEach(e => {
+          console.log(e.item);
+        });
+      });
+    });
   }, []);
 
   //v                         end of function section
@@ -71,6 +84,7 @@ const SocialApp = ({navigation}) => {
   const avatarRef = useRef();
   const postRef = useRef();
   const state = useSelector(state => state.postReducer);
+
   const dispatcher = useDispatch();
   const [indicatorShown, setIndicatorShown] = useState(false);
 
@@ -82,6 +96,7 @@ const SocialApp = ({navigation}) => {
     setList(state);
     setIndicatorShown(false);
   }, [Refresher]);
+
   const HeaderOfFlatListSection = () => (
     <View style={style.WholeContainer}>
       <View
@@ -170,7 +185,10 @@ const SocialApp = ({navigation}) => {
             size={27}
           />
         </TouchableOpacity>
-        <Entypo name={'dots-two-vertical'} color={'white'} size={27} />
+        <TouchableOpacity
+          onPress={() => dbExecuter({mode: 'add', states: 'alireza'})}>
+          <Entypo name={'dots-two-vertical'} color={'white'} size={27} />
+        </TouchableOpacity>
       </View>
       {/* // end of topBar icon View */}
       {/* // title section View */}
